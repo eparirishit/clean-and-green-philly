@@ -44,7 +44,7 @@ jobs:
               - title: "🚀 Features"
                 labels: [ "feature", "enhancement", "feat" ]
               - title: "🐛 Bug Fixes"
-                labels: [ "fix", "bug". "bugfix" ]
+                labels: [ "fix", "bug", "bugfix" ]
             change-template: "- $TITLE ([#{{number}}]({{url}}))"
             change-title-escapes: true
             template: |
@@ -52,6 +52,12 @@ jobs:
               $CHANGES
             prerelease: false
             draft: false
+
+      - name: Debug Release Notes Output
+        env:
+          RELEASE_NOTES: ${{ steps.release_notes.outputs.release_notes }}
+        run: |
+          echo "Release Notes Output: $RELEASE_NOTES"
 
       # - name: Semantic Release
       #   env:
