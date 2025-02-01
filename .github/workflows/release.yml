@@ -55,30 +55,35 @@ jobs:
 
       - name: Debug Release Notes Output
         env:
-          RELEASE_NOTES: ${{ steps.release_notes.outputs.release_notes }}
+          RELEASE_NOTES: ${{ steps.release_notes.outputs.body }}
         run: |
           echo "Release Notes Output: $RELEASE_NOTES"
 
-      # - name: Semantic Release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #   run: npx semantic-release
-
       - name: Publish Release Notes
-        if: steps.release_notes.outputs.release_notes != ''
+        if: steps.release_notes.outputs.body != ''
         uses: actions/github-script@v6
         with:
           script: |
             const { context, github } = require('@actions/github');
-            const releaseNotes = `${{ steps.release_notes.outputs.release_notes }}`;
+            const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
             const newVersion = require('./package.json').version;
-            github.rest.repos.createRelease({
+            const releaseTitle = `Version ${newVersion}`;
+            const date = new Date();
+            const formattedDate = date.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            });
+
+            // Custom body with the formatted date
+            const finalBody = `## Release Notes for Version ${newVersion} - ${formattedDate}\n\n${releaseNotes}`;
+
+            await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `v${newVersion}`,
-              name: `Version ${newVersion}`,
-              body: releaseNotes,
+              name: releaseTitle,
+              body: finalBody,
               draft: false,
               prerelease: false
             });
