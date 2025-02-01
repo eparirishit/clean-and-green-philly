@@ -51,7 +51,7 @@ jobs:
               ## Changes
               $CHANGES
             prerelease: false
-            draft: true
+            draft: false
 
       - name: Debug Release Notes Output
         env:
