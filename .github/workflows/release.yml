@@ -64,7 +64,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { context, github } = require('@actions/github');
+            const { github } = require('@actions/github');
             const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
             const newVersion = require('./package.json').version;
             const releaseTitle = `Version ${newVersion}`;
