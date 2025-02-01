@@ -38,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           config: |
-            name-template: "Version $NEXT_PATCH_VERSION"
+            name-template: "v$NEXT_PATCH_VERSION"
             tag-template: "v$NEXT_PATCH_VERSION"
             categories:
               - title: "🚀 Features"
@@ -51,7 +51,7 @@ jobs:
               ## Changes
               $CHANGES
             prerelease: false
-            draft: true
+            draft: false
 
       - name: Debug Release Notes Output
         env:
@@ -75,49 +75,16 @@ jobs:
               month: "long",
               day: "numeric"
             });
+
             const finalBody = `## Release Notes for Version ${newVersion} - ${formattedDate}\n\n${releaseNotes}`;
 
-            try {
-              // Fetch all existing releases
-              const releases = await github.rest.repos.listReleases({
-                owner: owner,
-                repo: repo
-              });
-
-              // Find the existing draft release by tag name
-              const existingRelease = releases.data.find(r => r.tag_name === `v${newVersion}`);
-
-              if (existingRelease) {
-                console.log(`Updating existing draft release: v${newVersion}`);
-
-                // Update the existing draft release
-                await github.rest.repos.updateRelease({
-                  owner: owner,
-                  repo: repo,
-                  release_id: existingRelease.id,
-                  tag_name: `v${newVersion}`,
-                  name: releaseTitle,
-                  body: finalBody,
-                  draft: false,
-                  prerelease: false
-                });
-
-              } else {
-                console.log(`Creating new release: v${newVersion}`);
-
-                // If no draft exists, create a new release
-                await github.rest.repos.createRelease({
-                  owner: owner,
-                  repo: repo,
-                  tag_name: `v${newVersion}`,
-                  name: releaseTitle,
-                  body: finalBody,
-                  draft: false,
-                  prerelease: false
-                });
-              }
-
-            } catch (error) {
-              console.error(`Error handling release: ${error.message}`);
-              throw error;
-            }
+            await github.rest.repos.updateRelease({
+              owner: owner,
+              repo: repo,
+              release_id: existingRelease.id,
+              tag_name: `v${newVersion}`,
+              name: releaseTitle,
+              body: finalBody,
+              draft: false,
+              prerelease: false
+            });
