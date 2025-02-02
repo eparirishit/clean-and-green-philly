@@ -52,6 +52,7 @@ jobs:
               $CHANGES
             prerelease: false
             draft: false
+          dry-run: true # Prevents release-drafter from creating the release
 
       - name: Debug Release Notes Output
         env:
@@ -65,7 +66,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
+            const releaseNotes = ${{ steps.release_notes.outputs.body }};
             const newVersion = require('./package.json').version;
             const releaseTitle = `Version ${newVersion}`;
 
