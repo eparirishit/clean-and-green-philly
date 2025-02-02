@@ -50,9 +50,7 @@ jobs:
             template: |
               ## Changes
               $CHANGES
-            prerelease: false
-            draft: false
-          dry-run: true # Prevents release-drafter from creating the release
+            publish: false
 
       - name: Debug Release Notes Output
         env:
