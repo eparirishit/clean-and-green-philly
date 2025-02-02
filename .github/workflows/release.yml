@@ -26,14 +26,16 @@ jobs:
 
       - name: Get package version
         id: package_version
-        run: echo "version=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Create Release with Automated Notes
         uses: actions/github-script@v6
         with:
           script: |
             const { repo, owner } = context.repo;
-            const newVersion = `${{ steps.package_version.outputs.version }}`;
+            const newVersion = '${{ steps.package_version.outputs.version }}'.trim();
             const tagName = `v${newVersion}`;
 
             // Create release with GitHub's automated notes
@@ -41,13 +43,13 @@ jobs:
               owner: owner,
               repo: repo,
               tag_name: tagName,
-              name: tagName,
-              generate_release_notes: true,  # Enable GitHub's auto-generated notes
+              name: `Version ${newVersion}`,
+              generate_release_notes: true,
               draft: false,
               prerelease: false
             });
 
-            // Add custom header to the generated notes
+            // Add custom date header
             const date = new Date().toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -59,5 +61,5 @@ jobs:
               repo: repo,
               release_id: response.data.id,
               body: `Release Notes for Version ${newVersion} - ${date}\n\n${response.data.body}`,
-              name: `Version ${newVersion} - ${date}`
+              name: `Version ${newVersion}`
             });
