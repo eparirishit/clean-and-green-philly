@@ -81,7 +81,6 @@ jobs:
             await github.rest.repos.updateRelease({
               owner: owner,
               repo: repo,
-              release_id: existingRelease.id,
               tag_name: `v${newVersion}`,
               name: releaseTitle,
               body: finalBody,
