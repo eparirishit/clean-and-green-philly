@@ -13,79 +13,51 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for full commit history
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
 
-      - name: List files in the root directory
-        run: ls -al
-
-      - name: Check if package-lock.json exists
-        run: test -f package-lock.json && echo "package-lock.json exists" || echo "package-lock.json does not exist"
-
-      - name: Clear NPM Cache
-        run: npm cache clean --force
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Release Notes
-        id: release_notes
-        uses: release-drafter/release-drafter@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get package version
+        id: package_version
+        run: echo "version=$(node -p 'require(\"./package.json\").version')" >> $GITHUB_OUTPUT
+
+      - name: Create Release with Automated Notes
+        uses: actions/github-script@v6
         with:
-          config: |
-            name-template: "v$NEXT_PATCH_VERSION"
-            tag-template: "v$NEXT_PATCH_VERSION"
-            categories:
-              - title: "🚀 Features"
-                labels: [ "feature", "enhancement", "feat" ]
-              - title: "🐛 Bug Fixes"
-                labels: [ "fix", "bug", "bugfix" ]
-            change-template: "- $TITLE ([#{{number}}]({{url}}))"
-            change-title-escapes: true
-            template: |
-              📢 Release Notes for Version $NEXT_PATCH_VERSION - $(date +'%B %d, %Y')
+          script: |
+            const { repo, owner } = context.repo;
+            const newVersion = '${{ steps.package_version.outputs.version }}';
+            const tagName = `v${newVersion}`;
 
-              ## Changes
-              $CHANGES
-              📜 Full Changelog https://github.com/${{ github.repository }}/compare/v$PREVIOUS_TAG...v$NEXT_PATCH_VERSION
-            publish: true
+            // Create release with GitHub's automated notes
+            const response = await github.rest.repos.createRelease({
+              owner: owner,
+              repo: repo,
+              tag_name: tagName,
+              name: tagName,
+              generate_release_notes: true,  # Enable GitHub's auto-generated notes
+              draft: false,
+              prerelease: false
+            });
 
-      # - name: Debug Release Notes Output
-      #   env:
-      #     RELEASE_NOTES: ${{ steps.release_notes.outputs.body }}
-      #   run: |
-      #     echo "Release Notes Output: $RELEASE_NOTES"
+            // Add custom header to the generated notes
+            const date = new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            });
 
-      # - name: Publish Release Notes
-      #   if: steps.release_notes.outputs.body != ''
-      #   uses: actions/github-script@v6
-      #   with:
-      #     script: |
-      #       const { repo, owner } = context.repo;
-      #       const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
-      #       const newVersion = require('./package.json').version;
-      #       const releaseTitle = `Version ${newVersion}`;
-
-      #       const date = new Date();
-      #       const formattedDate = date.toLocaleDateString("en-US", {
-      #         year: "numeric",
-      #         month: "long",
-      #         day: "numeric"
-      #       });
-
-      #       const finalBody = `## Release Notes for Version ${newVersion} - ${formattedDate}\n\n${releaseNotes}`;
-
-      #       await github.rest.repos.createRelease({
-      #         owner: owner,
-      #         repo: repo,
-      #         tag_name: `v${newVersion}`,
-      #         name: releaseTitle,
-      #         body: finalBody,
-      #         draft: false,
-      #         prerelease: false
-      #       });
+            await github.rest.repos.updateRelease({
+              owner: owner,
+              repo: repo,
+              release_id: response.data.id,
+              body: `Release Notes for Version ${newVersion} - ${date}\n\n${response.data.body}`,
+              name: `Version ${newVersion} - ${date}`
+            });
