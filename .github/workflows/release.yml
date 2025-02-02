@@ -78,7 +78,7 @@ jobs:
 
             const finalBody = `## Release Notes for Version ${newVersion} - ${formattedDate}\n\n${releaseNotes}`;
 
-            await github.rest.repos.updateRelease({
+            await github.rest.repos.createRelease({
               owner: owner,
               repo: repo,
               tag_name: `v${newVersion}`,
