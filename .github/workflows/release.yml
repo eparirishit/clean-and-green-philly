@@ -64,7 +64,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const releaseNotes = ${{ steps.release_notes.outputs.body }};
+            const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
             const newVersion = require('./package.json').version;
             const releaseTitle = `Version ${newVersion}`;
 
