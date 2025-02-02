@@ -33,7 +33,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const newVersion = '${{ steps.package_version.outputs.version }}';
+            const newVersion = `${{ steps.package_version.outputs.version }}`;
             const tagName = `v${newVersion}`;
 
             // Create release with GitHub's automated notes
