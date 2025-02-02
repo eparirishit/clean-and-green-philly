@@ -48,41 +48,44 @@ jobs:
             change-template: "- $TITLE ([#{{number}}]({{url}}))"
             change-title-escapes: true
             template: |
+              📢 Release Notes for Version $NEXT_PATCH_VERSION - $(date +'%B %d, %Y')
+
               ## Changes
               $CHANGES
-            publish: false
+              📜 Full Changelog https://github.com/${{ github.repository }}/compare/v$PREVIOUS_TAG...v$NEXT_PATCH_VERSION
+            publish: true
 
-      - name: Debug Release Notes Output
-        env:
-          RELEASE_NOTES: ${{ steps.release_notes.outputs.body }}
-        run: |
-          echo "Release Notes Output: $RELEASE_NOTES"
+      # - name: Debug Release Notes Output
+      #   env:
+      #     RELEASE_NOTES: ${{ steps.release_notes.outputs.body }}
+      #   run: |
+      #     echo "Release Notes Output: $RELEASE_NOTES"
 
-      - name: Publish Release Notes
-        if: steps.release_notes.outputs.body != ''
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { repo, owner } = context.repo;
-            const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
-            const newVersion = require('./package.json').version;
-            const releaseTitle = `Version ${newVersion}`;
+      # - name: Publish Release Notes
+      #   if: steps.release_notes.outputs.body != ''
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       const { repo, owner } = context.repo;
+      #       const releaseNotes = `${{ steps.release_notes.outputs.body }}`;
+      #       const newVersion = require('./package.json').version;
+      #       const releaseTitle = `Version ${newVersion}`;
 
-            const date = new Date();
-            const formattedDate = date.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric"
-            });
+      #       const date = new Date();
+      #       const formattedDate = date.toLocaleDateString("en-US", {
+      #         year: "numeric",
+      #         month: "long",
+      #         day: "numeric"
+      #       });
 
-            const finalBody = `## Release Notes for Version ${newVersion} - ${formattedDate}\n\n${releaseNotes}`;
+      #       const finalBody = `## Release Notes for Version ${newVersion} - ${formattedDate}\n\n${releaseNotes}`;
 
-            await github.rest.repos.createRelease({
-              owner: owner,
-              repo: repo,
-              tag_name: `v${newVersion}`,
-              name: releaseTitle,
-              body: finalBody,
-              draft: false,
-              prerelease: false
-            });
+      #       await github.rest.repos.createRelease({
+      #         owner: owner,
+      #         repo: repo,
+      #         tag_name: `v${newVersion}`,
+      #         name: releaseTitle,
+      #         body: finalBody,
+      #         draft: false,
+      #         prerelease: false
+      #       });
