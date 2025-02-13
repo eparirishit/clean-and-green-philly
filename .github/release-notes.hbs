@@ -1,0 +1,59 @@
+# Version
+{{release}}
+
+**Release Date:**
+{{date}}
+
+--- ## 🚀 What's New?
+{{#if commitGroups}}
+  {{#each commitGroups}}
+    ###
+    {{title}}
+    {{#each commits}}
+      -
+      {{message}}
+      ([#{{id}}]({{commitUrl}}) by @{{author}})
+    {{/each}}
+  {{/each}}
+{{/if}}
+
+--- ## 🐛 Bug Fixes
+{{#if commitGroups}}
+  {{#each commitGroups}}
+    {{#if (eq title '🐛 Bug Fixes')}}
+      {{#each commits}}
+        -
+        {{message}}
+        ([#{{id}}]({{commitUrl}}) by @{{author}})
+      {{/each}}
+    {{/if}}
+  {{/each}}
+{{/if}}
+
+--- ## 💥 Breaking Changes
+{{#if commitGroups}}
+  {{#each commitGroups}}
+    {{#if (eq title '🚨 Breaking Changes')}}
+      {{#each commits}}
+        - **BREAKING:**
+        {{message}}
+        ([#{{id}}]({{commitUrl}}) by @{{author}})
+      {{/each}}
+    {{/if}}
+  {{/each}}
+{{/if}}
+
+--- ## 👥 New Contributors
+{{#if commitGroups}}
+  {{#each commitGroups}}
+    {{#each commits}}
+      {{#if (notInArray @root.contributors author)}}
+        - @{{author}}
+      {{/if}}
+    {{/each}}
+  {{/each}}
+{{/if}}
+
+--- ## 📄 Full Changelog [Compare
+changes](https://github.com/your-org/your-repo/compare/v{{lastRelease.version}}...v{{release}})
+---
