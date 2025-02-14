@@ -1,77 +1,58 @@
-# Version {{release}}
+# Version
+{{release}}
 
-Release Notes for Version {{release}} – {{date}}
+Release Notes for Version
+{{release}}
+–
+{{date}}
 
-{{!-- 🚀 Features --}}
+## What's Changed
 {{#each commitGroups}}
-  {{#if (eq title "Features")}}
-## 🚀 Features
-  {{#each commits}}
-* **{{header}}:** {{message}} by @{{author}} ([#{{id}}]({{commitUrl}}))
-  {{/each}}
+  {{#if
+    (or
+      (eq title 'feat')
+      (eq title 'fix')
+      (eq title 'chore')
+      (eq title 'refactor')
+      (eq title 'perf')
+    )
+  }}
+    ###
+    {{capitalize title}}
+    {{#each commits}}
+      * **{{title}}:**
+      {{message}}
+      by @{{author}}
+      ([#{{id}}]({{commitUrl}}))
+    {{/each}}
   {{/if}}
 {{/each}}
 
-{{!-- 🐛 Bug Fixes --}}
-{{#each commitGroups}}
-  {{#if (eq title "Bug Fixes")}}
-## 🐛 Bug Fixes
-  {{#each commits}}
-* **{{header}}:** {{message}} by @{{author}} ([#{{id}}]({{commitUrl}}))
+{{#if breakingChanges}}
+  ## 💥 Breaking Changes
+  {{#each breakingChanges}}
+    * **BREAKING:**
+    {{message}}
+    by @{{author}}
+    ([#{{id}}]({{commitUrl}}))
   {{/each}}
-  {{/if}}
-{{/each}}
-
-{{!-- 💥 Breaking Changes --}}
-{{#each commitGroups}}
-  {{#if (eq title "Breaking Changes")}}
-## 💥 Breaking Changes
-  {{#each commits}}
-* **BREAKING CHANGE:** {{message}} by @{{author}} ([#{{id}}]({{commitUrl}}))
-  {{/each}}
-  {{/if}}
-{{/each}}
-
-{{!-- 📚 Documentation & Others --}}
-{{#each commitGroups}}
-  {{#if (eq title "Documentation")}}
-## 📚 Documentation
-  {{#each commits}}
-* **{{header}}:** {{message}} by @{{author}} ([#{{id}}]({{commitUrl}}))
-  {{/each}}
-  {{/if}}
-{{/each}}
-
-{{!-- 🔧 Other Changes --}}
-{{#each commitGroups}}
-  {{#if (eq title "Others")}}
-## 🔧 Other Changes
-  {{#each commits}}
-* **{{header}}:** {{message}} by @{{author}} ([#{{id}}]({{commitUrl}}))
-  {{/each}}
-  {{/if}}
-{{/each}}
-
----
-
-## 👥 New Contributors
-{{!-- This assumes that your semantic-release context populates a "contributors" array. 
-      If not, you can also aggregate authors from commits as shown below. --}}
-{{#if contributors}}
-{{#each contributors}}
-* @{{this}}
-{{/each}}
-{{else}}
-{{!-- Fallback: iterate through commits and list unique authors --}}
-{{#each commitGroups}}
-  {{#each commits}}
-    {{#if (notInArray @root.contributors author)}}
-* @{{author}}
-    {{/if}}
-  {{/each}}
-{{/each}}
 {{/if}}
 
----
+## 👥 New Contributors
+{{#if contributors}}
+  {{#each contributors}}
+    * @{{this}}
+  {{/each}}
+{{else}}
+  {{! If contributors are not aggregated, collect unique commit authors }}
+  {{#each commitGroups}}
+    {{#each commits}}
+      {{#if (notInArray @root.contributors author)}}
+        * @{{author}}
+      {{/if}}
+    {{/each}}
+  {{/each}}
+{{/if}}
 
-**Full Changelog:** [Compare changes](https://github.com/eparirishit/clean-and-green-philly/compare/v{{lastRelease.version}}...v{{release}})
+--- **Full Changelog:** [Compare
+changes](https://github.com/eparirishit/clean-and-green-philly/compare/v{{lastRelease.version}}...v{{release}})
