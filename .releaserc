@@ -17,7 +17,7 @@
           ],
           "commitsSort": "header",
           "noteGroupsSort": "title",
-          "mainTemplate": "./.github/release-notes.hbs",
+          "mainTemplate": ".github/release-notes.hbs",
           "transform": "function(commit, context) { const author = commit.author?.name || commit.author || 'Unknown'; if (!context.newContributors) { context.newContributors = new Set(); context.existingContributors = new Set(); } const isFirstCommit = !context.commits.some(function(c) { return (c.author?.name || c.author) === author && c.hash !== commit.hash; }); if (isFirstCommit) { const hasPreviousContributions = context.previousReleases?.some(function(release) { return release.commits.some(function(c) { return (c.author?.name || c.author) === author; }); }); if (!hasPreviousContributions) { context.newContributors.add(author); } else { context.existingContributors.add(author); } } else { context.existingContributors.add(author); } commit.author = author; return commit; }"
         }
       }
