@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/eparirishit/clean-and-green-philly/compare/v1.0.4...v1.0.5) (2025-02-13)
+
+
+### Bug Fixes
+
+* update to the release yml file ([8cf6e10](https://github.com/eparirishit/clean-and-green-philly/commit/8cf6e10bcf5ecd0384432bff5e7380242caf1bf6))
+
 # 1.0.0 (2025-02-01)
 
 
