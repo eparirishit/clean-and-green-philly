@@ -5,11 +5,12 @@ Release Notes for Version
 {{/if}}
 
 {{#if commits}}
+  {{! Iterate over commit groups }}
   {{#each commitGroups}}
     {{#if commits}}
-      {{#if (eq title 'break')}}
+      {{! Breaking Changes Section }}
+      {{#if (eq title 'BREAKING CHANGE')}}
         ## 💥 Breaking Changes
-
         {{#each commits}}
           * **BREAKING**:
           {{subject}}
@@ -19,6 +20,7 @@ Release Notes for Version
     {{/if}}
   {{/each}}
 
+  {{! Features, Fixes, Reverts & Performance Section }}
   {{#each commitGroups}}
     {{#if commits}}
       {{#if
@@ -30,7 +32,6 @@ Release Notes for Version
         )
       }}
         ## 🚀 Features, Fixes & Performance
-
         {{#each commits}}
           {{#if (eq type 'feat')}}
             * ✨
@@ -57,8 +58,8 @@ Release Notes for Version
     {{/if}}
   {{/each}}
 
+  {{! Other Changes Section: Commits not in the above types }}
   ## 🔨 Other Changes
-
   {{#each commits}}
     {{#unless
       (or (eq type 'feat') (eq type 'fix') (eq type 'revert') (eq type 'perf'))
@@ -80,13 +81,14 @@ Release Notes for Version
     * @{{this}}
     🎉
   {{/each}}
-
 {{/if}}
 
-## 🙏 Existing Contributors
-{{#each @root.existingContributors}}
-  * @{{this}}
-{{/each}}
+{{#if @root.existingContributors.length}}
+  ### 🙏 Existing Contributors
+  {{#each @root.existingContributors}}
+    * @{{this}}
+  {{/each}}
+{{/if}}
 
 {{#if compareUrl}}
   📄 Full Changelog:

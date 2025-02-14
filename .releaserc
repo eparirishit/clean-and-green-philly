@@ -1,5 +1,7 @@
 {
-  "branches": ["main"],
+  "branches": [
+    "main"
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     [
@@ -17,8 +19,8 @@
           ],
           "commitsSort": "header",
           "noteGroupsSort": "title",
-          "mainTemplate": ".github/release-notes.hbs",
-          "transform": "function(commit, context) { const author = commit.author?.name || commit.author || 'Unknown'; if (!context.newContributors) { context.newContributors = new Set(); context.existingContributors = new Set(); } const isFirstCommit = !context.commits.some(function(c) { return (c.author?.name || c.author) === author && c.hash !== commit.hash; }); if (isFirstCommit) { const hasPreviousContributions = context.previousReleases?.some(function(release) { return release.commits.some(function(c) { return (c.author?.name || c.author) === author; }); }); if (!hasPreviousContributions) { context.newContributors.add(author); } else { context.existingContributors.add(author); } } else { context.existingContributors.add(author); } commit.author = author; return commit; }"
+          "mainTemplate": "./.github/release-notes.hbs",
+          "transform": "function(commit, context) { \n  // Normalize author to a string\n  const author = commit.author && (commit.author.name || commit.author) || 'Unknown';\n  \n  // Initialize contributor arrays if not already set\n  if (!context.newContributors) { \n    context.newContributors = [];\n    context.existingContributors = [];\n  }\n\n  // Determine if this is the first commit by this author in this release\n  const isFirstCommit = !context.commits.some(function(c) { \n    return (c.author && (c.author.name || c.author)) === author && c.hash !== commit.hash; \n  });\n\n  if (isFirstCommit) {\n    // Check previous releases for contributions\n    const hasPreviousContributions = context.previousReleases && context.previousReleases.some(function(release) { \n      return release.commits.some(function(c) { \n        return (c.author && (c.author.name || c.author)) === author; \n      }); \n    });\n    if (!hasPreviousContributions) {\n      if (!context.newContributors.includes(author)) {\n        context.newContributors.push(author);\n      }\n    } else {\n      if (!context.existingContributors.includes(author)) {\n        context.existingContributors.push(author);\n      }\n    }\n  } else {\n    if (!context.existingContributors.includes(author)) {\n      context.existingContributors.push(author);\n    }\n  }\n\n  commit.author = author;\n  return commit;\n}"
         }
       }
     ],
