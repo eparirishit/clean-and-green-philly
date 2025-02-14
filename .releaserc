@@ -10,7 +10,8 @@
       {
         "preset": "conventionalcommits",
         "writerOpts": {
-          "transform": "function (commit, context) {             if (commit.author && typeof commit.author === 'object') {               commit.author = commit.author.name || 'Unknown';             }             return commit;           }"
+          "transform": "function (commit, context) {             if (commit.author && typeof commit.author === 'object') {               commit.author = commit.author.name || 'Unknown';             }             return commit;           }",
+          "template": "./.github/release-notes.hbs"
         }
       }
     ],
