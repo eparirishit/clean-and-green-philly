@@ -1,6 +1,7 @@
 {
   "branches": [
-    "main"
+    "main",
+    "eparirishit/1011-consolidate-release-and-release-drafter-workflows"
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
@@ -9,33 +10,7 @@
       {
         "preset": "conventionalcommits",
         "writerOpts": {
-          "headerPartial": "./.github/release-notes.hbs",
-          "commitGroupsSort": "title",
-          "commitPartial": "- {{#if scope}}**{{scope}}:** {{/if}}{{message}} ([#{{id}}]({{commitUrl}}) by @{{author}})",
-          "groupBy": "type",
-          "commitGroups": [
-            {
-              "title": "🚀 Features",
-              "commits": "feat"
-            },
-            {
-              "title": "🐛 Bug Fixes",
-              "commits": "fix"
-            },
-            {
-              "title": "🛠️ Refactoring",
-              "commits": "refactor"
-            },
-            {
-              "title": "📄 Documentation Updates",
-              "commits": "docs"
-            },
-            {
-              "title": "🚨 Breaking Changes",
-              "commits": "BREAKING CHANGE"
-            }
-          ],
-          "transform": "function (commit, context) { return commit; }"
+          "transform": "function (commit, context) {             if (commit.author && typeof commit.author === 'object') {               commit.author = commit.author.name || 'Unknown';             }             return commit;           }"
         }
       }
     ],
