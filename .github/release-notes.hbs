@@ -1,58 +1,94 @@
-# Version
-{{release}}
-
 Release Notes for Version
-{{release}}
-–
-{{date}}
+{{version}}
+{{#if date}}
+  {{date}}
+{{/if}}
 
-## What's Changed
-{{#each commitGroups}}
-  {{#if
-    (or
-      (eq title 'feat')
-      (eq title 'fix')
-      (eq title 'chore')
-      (eq title 'refactor')
-      (eq title 'perf')
-    )
-  }}
-    ###
-    {{capitalize title}}
-    {{#each commits}}
-      * **{{title}}:**
-      {{message}}
-      by @{{author}}
-      ([#{{id}}]({{commitUrl}}))
-    {{/each}}
-  {{/if}}
+{{#if commits}}
+  {{#each commitGroups}}
+    {{#if commits}}
+      {{#if (eq title 'break')}}
+        ## 💥 Breaking Changes
+
+        {{#each commits}}
+          * **BREAKING**:
+          {{subject}}
+          by @{{author}}{{#if pull}} in {{pull.url}}{{/if}}
+        {{/each}}
+      {{/if}}
+    {{/if}}
+  {{/each}}
+
+  {{#each commitGroups}}
+    {{#if commits}}
+      {{#if
+        (or
+          (eq title 'feat')
+          (eq title 'fix')
+          (eq title 'revert')
+          (eq title 'perf')
+        )
+      }}
+        ## 🚀 Features, Fixes & Performance
+
+        {{#each commits}}
+          {{#if (eq type 'feat')}}
+            * ✨
+            {{subject}}
+            by @{{author}}{{#if pull}} in {{pull.url}}{{/if}}
+          {{/if}}
+          {{#if (eq type 'fix')}}
+            * 🐛
+            {{subject}}
+            by @{{author}}{{#if pull}} in {{pull.url}}{{/if}}
+          {{/if}}
+          {{#if (eq type 'revert')}}
+            * ⏪️
+            {{subject}}
+            by @{{author}}{{#if pull}} in {{pull.url}}{{/if}}
+          {{/if}}
+          {{#if (eq type 'perf')}}
+            * ⚡️
+            {{subject}}
+            by @{{author}}{{#if pull}} in {{pull.url}}{{/if}}
+          {{/if}}
+        {{/each}}
+      {{/if}}
+    {{/if}}
+  {{/each}}
+
+  ## 🔨 Other Changes
+
+  {{#each commits}}
+    {{#unless
+      (or (eq type 'feat') (eq type 'fix') (eq type 'revert') (eq type 'perf'))
+    }}
+      {{#unless breaking}}
+        *
+        {{subject}}
+        by @{{author}}{{#if pull}} in {{pull.url}}{{/if}}
+      {{/unless}}
+    {{/unless}}
+  {{/each}}
+{{/if}}
+
+## 👥 Contributors
+
+{{#if @root.newContributors.length}}
+  ### ✨ New Contributors
+  {{#each @root.newContributors}}
+    * @{{this}}
+    🎉
+  {{/each}}
+
+{{/if}}
+
+## 🙏 Existing Contributors
+{{#each @root.existingContributors}}
+  * @{{this}}
 {{/each}}
 
-{{#if breakingChanges}}
-  ## 💥 Breaking Changes
-  {{#each breakingChanges}}
-    * **BREAKING:**
-    {{message}}
-    by @{{author}}
-    ([#{{id}}]({{commitUrl}}))
-  {{/each}}
+{{#if compareUrl}}
+  📄 Full Changelog:
+  {{compareUrl}}
 {{/if}}
-
-## 👥 New Contributors
-{{#if contributors}}
-  {{#each contributors}}
-    * @{{this}}
-  {{/each}}
-{{else}}
-  {{! If contributors are not aggregated, collect unique commit authors }}
-  {{#each commitGroups}}
-    {{#each commits}}
-      {{#if (notInArray @root.contributors author)}}
-        * @{{author}}
-      {{/if}}
-    {{/each}}
-  {{/each}}
-{{/if}}
-
---- **Full Changelog:** [Compare
-changes](https://github.com/eparirishit/clean-and-green-philly/compare/v{{lastRelease.version}}...v{{release}})
