@@ -7,8 +7,18 @@
       {
         "preset": "conventionalcommits",
         "writerOpts": {
-          "transform": "function(commit, context) {                     \n  // Filter out merge commits for pull requests or branch merges                     \n  if (/^(Merge pull request|Merge branch)/.test(commit.header)) {                     \n    return null;                     \n  }                     \n  // Ensure the author field is a string                     \n  if (commit.author && typeof commit.author === 'object') {                     \n    commit.author = commit.author.name || 'Unknown';                     \n  }                     \n  return commit;                     \n}",
-          "mainTemplate": "Release Notes for Version {{nextRelease.version}} – {{date}}\n\n{{#each commitGroups}}\n  {{#if this.commits.length}}\n### {{this.title}}\n  {{#each this.commits}}\n* **{{header}}:** {{message}} by @{{author}} ([{{shortHash}}]({{commitUrl}}))\n  {{/each}}\n  {{/if}}\n{{/each}}\n\n{{#if breakingChanges.length}}\n## 💥 Breaking Changes\n{{#each breakingChanges}}\n* **BREAKING:** {{message}} by @{{author}} ([{{shortHash}}]({{commitUrl}}))\n{{/each}}\n{{/if}}\n\n## 👥 New Contributors\n{{#if contributors}}\n  {{#each contributors}}\n* @{{this}}\n  {{/each}}\n{{/if}}\n\n---\n\n**Full Changelog:** [Compare changes](https://github.com/eparirishit/clean-and-green-philly/compare/v{{lastRelease.version}}...v{{nextRelease.version}})"
+          "groupBy": "type",
+          "commitGroupsSort": [
+            "BREAKING CHANGE",
+            "feat",
+            "fix",
+            "revert",
+            "perf"
+          ],
+          "commitsSort": "header",
+          "noteGroupsSort": "title",
+          "mainTemplate": "./.github/release-notes.hbs",
+          "transform": "function(commit, context) { const author = commit.author?.name || commit.author || 'Unknown'; if (!context.newContributors) { context.newContributors = new Set(); context.existingContributors = new Set(); } const isFirstCommit = !context.commits.some(function(c) { return (c.author?.name || c.author) === author && c.hash !== commit.hash; }); if (isFirstCommit) { const hasPreviousContributions = context.previousReleases?.some(function(release) { return release.commits.some(function(c) { return (c.author?.name || c.author) === author; }); }); if (!hasPreviousContributions) { context.newContributors.add(author); } else { context.existingContributors.add(author); } } else { context.existingContributors.add(author); } commit.author = author; return commit; }"
         }
       }
     ],
