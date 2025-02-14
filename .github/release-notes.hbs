@@ -1,17 +1,14 @@
-# Version
+# Release Notes for Version
 {{release}}
-
-**Release Date:**
+-
 {{date}}
 
---- ## 🚀 What's New?
+--- ## 🚀 What's Changed?
 {{#each commitGroups}}
-  ###
-  {{title}}
   {{#each commits}}
-    -
+    *
     {{message}}
-    ([#{{id}}]({{commitUrl}}) by @{{author}})
+    by @{{author}}
   {{/each}}
 {{/each}}
 
