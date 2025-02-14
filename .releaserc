@@ -9,8 +9,8 @@
       {
         "preset": "conventionalcommits",
         "writerOpts": {
-          "transform": "function (commit, context) {               \n  // Skip merge commits\n  if (/^Merge pull request/.test(commit.header)) {                 \n    return null;               \n  }               \n  // Ensure the author field is a string\n  if (commit.author && typeof commit.author === 'object') {                 \n    commit.author = commit.author.name || 'Unknown';               \n  }               \n  return commit;             }",
-          "template": ".github/release-notes.hbs"
+          "transform": "function (commit, context) {                   \n  if (/^Merge pull request/.test(commit.header)) {                   \n    return null;                   \n  }                   \n  if (commit.author && typeof commit.author === 'object') {                   \n    commit.author = commit.author.name || 'Unknown';                   \n  }                   \n  return commit;                 }",
+          "mainTemplate": "# Version {{release}}\n\nRelease Notes for Version {{release}} – {{date}}\n\n{{#each commitGroups}}\n  ### {{title}}\n  {{#each commits}}\n  * **{{header}}:** {{message}} by @{{author}} ([#{{id}}]({{commitUrl}}))\n  {{/each}}\n{{/each}}\n\n## 👥 New Contributors\n{{#if contributors}}\n  {{#each contributors}}\n  * @{{this}}\n  {{/each}}\n{{/if}}\n\n**Full Changelog:** [Compare changes](https://github.com/eparirishit/clean-and-green-philly/compare/v{{lastRelease.version}}...v{{release}})"
         }
       }
     ],
