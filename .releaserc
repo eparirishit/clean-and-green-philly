@@ -1,7 +1,6 @@
 {
   "branches": [
-    "main",
-    "eparirishit/1011-consolidate-release-and-release-drafter-workflows"
+    "main"
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
