@@ -10,7 +10,7 @@
         "preset": "conventionalcommits",
         "writerOpts": {
           "transform": "function (commit, context) {               \n  // Skip merge commits\n  if (/^Merge pull request/.test(commit.header)) {                 \n    return null;               \n  }               \n  // Ensure the author field is a string\n  if (commit.author && typeof commit.author === 'object') {                 \n    commit.author = commit.author.name || 'Unknown';               \n  }               \n  return commit;             }",
-          "template": "./.github/release-notes.hbs"
+          "template": ".github/release-notes.hbs"
         }
       }
     ],
