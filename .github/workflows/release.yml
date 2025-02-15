@@ -33,7 +33,6 @@ jobs:
         id: get_version
         run: |
           set -e
-          # Capture the new version from version.txt
           if [ -f version.txt ]; then
             version=$(cat version.txt)
             echo "version=${version}" >> $GITHUB_OUTPUT
