@@ -29,20 +29,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Read version number
+      - name: Read Version Number
         id: get_version
         run: |
           set -e
+          echo "---------------------------------------------------------"
           if [ -s version.txt ]; then
             version=$(cat version.txt)
+            echo "✅ New version detected: v$version"
+            echo "---------------------------------------------------------"
             echo "version=${version}" >> $GITHUB_OUTPUT
           else
-            echo ""
-            echo "#############################################################"
-            echo "# 🚫  No version update detected.                           #"
-            echo "#     This indicates that there is no new release to publish.#"
-            echo "#############################################################"
-            echo ""
+            echo "🚫 No version update detected.                           "
+            echo "   This indicates that there is no new release to publish."
+            echo "---------------------------------------------------------"
             echo "version=" >> $GITHUB_OUTPUT
           fi
 
